@@ -1,0 +1,399 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap');
+
+    :root {
+        --primary-color: #000;
+        --accent-color: #d4af37;
+        --bg-color: #f9f9f9;
+        --chat-width: 380px;
+        --chat-height: 600px;
+    }
+
+    /* כפתור צף */
+    .chat-toggle-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999; /* Z-Index גבוה במיוחד כדי להיות מעל הכל */
+        transition: transform 0.3s;
+    }
+
+    .chat-toggle-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .chat-toggle-btn svg {
+        fill: white;
+    }
+
+    /* חלון הצ'אט */
+    .chat-container {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: var(--chat-width);
+        height: var(--chat-height);
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        display: flex; 
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 99998;
+        border: 1px solid #eee;
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none;
+        transition: all 0.3s ease;
+        font-family: 'Heebo', sans-serif;
+        direction: rtl; /* חשוב לוורדפרס */
+    }
+
+    .chat-container.open {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
+    }
+
+    @media (max-width: 480px) {
+        .chat-container {
+            width: 90%;
+            right: 5%;
+            bottom: 85px;
+            height: 70vh;
+        }
+    }
+
+    /* כותרת */
+    .chat-header {
+        background-color: var(--primary-color);
+        color: #fff;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .chat-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: white;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .icon-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0 5px;
+    }
+
+    /* אזור ההודעות */
+    .chat-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background-color: var(--bg-color);
+    }
+
+    .message {
+        margin-bottom: 15px;
+        max-width: 85%;
+        line-height: 1.4;
+        font-size: 0.95rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message.bot {
+        align-self: flex-start;
+    }
+
+    .message-content {
+        padding: 10px 15px;
+        border-radius: 15px;
+        position: relative;
+        word-wrap: break-word;
+    }
+
+    .message.bot .message-content {
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-top-right-radius: 0;
+        color: #333;
+    }
+
+    .message.user {
+        align-self: flex-end; /* תיקון ליישור הודעות משתמש */
+    }
+
+    .message.user .message-content {
+        background-color: var(--primary-color);
+        color: #fff;
+        border-top-left-radius: 0;
+        text-align: right; 
+    }
+
+    /* אזור הקלדה */
+    .chat-input-area {
+        padding: 15px;
+        background-color: #fff;
+        border-top: 1px solid #eee;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        position: relative;
+    }
+
+    .chat-input-area input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        outline: none;
+        font-family: inherit;
+    }
+
+    .faq-btn, .send-btn {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .faq-btn { background-color: #eee; color: #555; font-size: 1.2rem; }
+    .send-btn { background-color: var(--primary-color); color: #fff; font-size: 1rem; }
+
+    /* תפריט שאלות נפוצות */
+    .faq-menu {
+        position: absolute;
+        bottom: 70px;
+        right: 15px;
+        width: 250px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        border: 1px solid #eee;
+        padding: 10px 0;
+        display: none;
+        z-index: 10000;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .faq-menu.show { display: block; animation: fadeIn 0.2s ease-in-out; }
+
+    .faq-item {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+        color: #333;
+        cursor: pointer;
+        border-bottom: 1px solid #f5f5f5;
+        transition: background 0.2s;
+    }
+
+    .faq-item:hover { background-color: #f9f9f9; color: var(--accent-color); }
+
+    /* מוצרים */
+    .products-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+    .product-card { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 8px; display: flex; gap: 10px; align-items: center; direction: rtl; }
+    .product-card img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; }
+    .product-info { flex: 1; }
+    .product-title { font-weight: bold; font-size: 0.85rem; margin-bottom: 4px; }
+    .product-price { font-size: 0.8rem; color: #666; margin-bottom: 6px; }
+    .buy-btn { display: inline-block; background-color: var(--primary-color); color: #fff; text-decoration: none; font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; }
+
+    .typing-indicator { display: none; font-size: 0.8rem; color: #888; margin: 10px 15px; font-style: italic; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div class="chat-toggle-btn" onclick="toggleChat()">
+    <svg fill="#ffffff" width="24" height="24" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+</div>
+
+<div class="chat-container" id="chatContainer">
+    <div class="chat-header">
+        <h3>Artery Gallery AI</h3>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="restartChat()" title="התחל שיחה מחדש">↻</button>
+            <button class="icon-btn close-btn" onclick="toggleChat()">×</button>
+        </div>
+    </div>
+    <div class="chat-messages" id="messagesList"></div>
+    <div class="typing-indicator" id="typingIndicator">ארטרי מקליד...</div>
+    <div class="chat-input-area">
+        <button class="faq-btn" onclick="toggleFaqMenu()">+</button>
+        <input type="text" id="userInput" placeholder="כתוב הודעה..." onkeypress="handleKeyPress(event)">
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+        <div class="faq-menu" id="faqMenu"></div>
+    </div>
+</div>
+
+<script>
+    const FAQ_DATA = {
+        "איך יודעים איזה מידה תתאים לי?": "שאלה מצוינת! הכי פשוט למדוד את הקיר (רוחב וגובה), לשלוח לי, ואני אשמח להתאים לך בול את המידה.",
+        "מה זה רול קנבס?": "רול קנבס הוא הדפסה איכותית על בד קנבס שמגיעה מגולגלת (בגליל), ללא מסגרת עץ.",
+        "מה זה רול פוסטר?": "רול פוסטר הוא הדפסה על נייר פוטו פרימיום, שמגיעה מגולגלת וללא מסגרת.",
+        "כמה זמן המשלוח?": "ההתחייבות היא עד 10 ימי עסקים, אבל לרוב אנחנו מפתיעים ומקדימים!",
+        "אפשר לשפר איכות של תמונה?": "בטח! יש לנו צוות גרפיקה תותח. נשפר, נשלח לאישור ורק אז נדפיס.",
+        "איפה אתם נמצאים?": "המחסנים באשקלון, רחוב נחלה 5. מוזמנים לאיסוף עצמי בתיאום!",
+        "יש הנחה או מבצעים?": "בטח! כרגע יש עד 25% הנחה על כל האתר.",
+        "אתם עובדים עם דיינרס?": "לא מכבדים דיינרס, אבל כן את כל השאר, כולל ביט ואפל פיי!"
+    };
+
+    // ============================================
+    // ⚠️ שים לב: כאן צריך להחליף לכתובת השרת האמיתי כשיעלה לאוויר!
+    const SERVER_URL = "http://localhost:5000/chat"; 
+    // ============================================
+
+    let conversationHistory = [];
+    let sessionId = localStorage.getItem('artery_session_id');
+
+    if (!sessionId) createNewSession();
+
+    function createNewSession() {
+        sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('artery_session_id', sessionId);
+        return sessionId;
+    }
+
+    function saveState() {
+        localStorage.setItem('artery_history_' + sessionId, JSON.stringify(conversationHistory));
+        localStorage.setItem('artery_is_open', document.getElementById('chatContainer').classList.contains('open'));
+    }
+
+    function loadState() {
+        renderFaqMenu();
+        const list = document.getElementById('messagesList');
+        list.innerHTML = '';
+        const savedHistory = localStorage.getItem('artery_history_' + sessionId);
+        
+        if (savedHistory) {
+            conversationHistory = JSON.parse(savedHistory);
+            conversationHistory.forEach(msg => addMessageToUI(msg.content, msg.sender, true));
+        } else {
+            addWelcomeMessage();
+        }
+
+        if (localStorage.getItem('artery_is_open') === 'true') {
+            document.getElementById('chatContainer').classList.add('open');
+        }
+    }
+
+    function addWelcomeMessage() {
+        addMessageToUI("היי! אני הנציג הדיגיטלי של ארטרי גלרי. 👋<br>אני כאן לעזור לך למצוא את התמונה המושלמת.", 'bot', false, true);
+    }
+
+    function restartChat() {
+        document.getElementById('messagesList').innerHTML = '';
+        conversationHistory = [];
+        localStorage.removeItem('artery_history_' + sessionId);
+        createNewSession();
+        addWelcomeMessage();
+    }
+
+    function renderFaqMenu() {
+        const menu = document.getElementById('faqMenu');
+        menu.innerHTML = '';
+        for (const [q, a] of Object.entries(FAQ_DATA)) {
+            const item = document.createElement('div');
+            item.className = 'faq-item';
+            item.textContent = q;
+            item.onclick = () => handleFaqClick(q, a);
+            menu.appendChild(item);
+        }
+    }
+
+    function toggleFaqMenu() { document.getElementById('faqMenu').classList.toggle('show'); }
+
+    function handleFaqClick(q, a) {
+        document.getElementById('faqMenu').classList.remove('show');
+        addMessageToUI(q, 'user');
+        setTimeout(() => addMessageToUI(a, 'bot'), 600);
+    }
+
+    function toggleChat() {
+        const c = document.getElementById('chatContainer');
+        c.classList.toggle('open');
+        if(c.classList.contains('open')) document.getElementById('userInput').focus();
+        saveState();
+    }
+
+    function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+
+    function addMessageToUI(text, sender, skipSave = false, isHtml = true) {
+        const list = document.getElementById('messagesList');
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', sender);
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('message-content');
+        
+        if (isHtml || sender === 'bot') contentDiv.innerHTML = text;
+        else contentDiv.textContent = text;
+        
+        msgDiv.appendChild(contentDiv);
+        list.appendChild(msgDiv);
+        list.scrollTop = list.scrollHeight;
+
+        if (!skipSave) {
+            conversationHistory.push({ role: sender === 'user' ? 'user' : 'assistant', content: text, sender: sender });
+            saveState();
+        }
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('userInput');
+        const text = input.value.trim();
+        if (!text) return;
+        document.getElementById('faqMenu').classList.remove('show');
+        
+        addMessageToUI(text, 'user', false, false);
+        input.value = '';
+        const typing = document.getElementById('typingIndicator');
+        typing.style.display = 'block';
+        document.getElementById('messagesList').scrollTop = document.getElementById('messagesList').scrollHeight;
+
+        try {
+            const response = await fetch(SERVER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text, history: conversationHistory, sessionId: sessionId })
+            });
+            const data = await response.json();
+            typing.style.display = 'none';
+            if (data.reply) addMessageToUI(data.reply, 'bot', false, true);
+        } catch (error) {
+            typing.style.display = 'none';
+            console.error(error);
+            // הודעה מנומסת למקרה שהשרת לא זמין
+            addMessageToUI("אופס, יש לי בעיית תקשורת קטנה עם הסטודיו. אולי ננסה שוב עוד רגע?", 'bot');
+        }
+    }
+
+    window.addEventListener('load', loadState);
+    document.addEventListener('click', function(e) {
+        const menu = document.getElementById('faqMenu');
+        const btn = document.querySelector('.faq-btn');
+        if (menu && !menu.contains(e.target) && !btn.contains(e.target)) menu.classList.remove('show');
+    });
+</script>
