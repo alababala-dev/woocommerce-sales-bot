@@ -57,11 +57,17 @@ Utils: Regex, PIL (Image Processing), JSON storage.
 Plaintext
 
 ├── app.py                 # Main application logic & API endpoints
+
 ├── prompts.py             # System prompts & Knowledge base
+
 ├── bot_tester.py          # Integration tests & sanity checks
+
 ├── widget.html            # Frontend chat interface
+
 ├── requirements.txt       # Python dependencies
+
 └── README.md              # Project documentation
+
 🔧 Installation & Setup
 Clone the repository:
 
