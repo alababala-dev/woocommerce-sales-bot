@@ -1,0 +1,9 @@
+Flask
+Flask-Cors
+Flask-Limiter
+openai
+woocommerce
+requests
+Pillow
+colorama
+python-dotenv
