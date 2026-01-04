@@ -67,8 +67,8 @@ Clone the repository:
 
 Bash
 
-git clone https://github.com/alababala-dev/artery-ai-chatbot.git
-cd artery-ai-chatbot
+git clone https://github.com/alababala-dev/woocommerce-sales-bot.git
+cd woocommerce-sales-bot
 Install dependencies:
 
 Bash
@@ -76,7 +76,6 @@ Bash
 pip install -r requirements.txt
 Configure Environment: Create a .env file and add your keys:
 
-קטע קוד
 
 OPENAI_API_KEY=your_key
 WC_KEY=your_wc_consumer_key
