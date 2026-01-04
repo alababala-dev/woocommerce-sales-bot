@@ -233,7 +233,7 @@
 
 <div class="chat-container" id="chatContainer">
     <div class="chat-header">
-        <h3>Artery Gallery AI</h3>
+        <h3>Business AI</h3>
         <div class="header-actions">
             <button class="icon-btn" onclick="restartChat()" title="התחל שיחה מחדש">↻</button>
             <button class="icon-btn close-btn" onclick="toggleChat()">×</button>
@@ -267,26 +267,26 @@
     // ============================================
 
     let conversationHistory = [];
-    let sessionId = localStorage.getItem('artery_session_id');
+    let sessionId = localStorage.getItem('business_session_id');
 
     if (!sessionId) createNewSession();
 
     function createNewSession() {
         sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('artery_session_id', sessionId);
+        localStorage.setItem('business_session_id', sessionId);
         return sessionId;
     }
 
     function saveState() {
-        localStorage.setItem('artery_history_' + sessionId, JSON.stringify(conversationHistory));
-        localStorage.setItem('artery_is_open', document.getElementById('chatContainer').classList.contains('open'));
+        localStorage.setItem('business_history_' + sessionId, JSON.stringify(conversationHistory));
+        localStorage.setItem('business_is_open', document.getElementById('chatContainer').classList.contains('open'));
     }
 
     function loadState() {
         renderFaqMenu();
         const list = document.getElementById('messagesList');
         list.innerHTML = '';
-        const savedHistory = localStorage.getItem('artery_history_' + sessionId);
+        const savedHistory = localStorage.getItem('business_history_' + sessionId);
         
         if (savedHistory) {
             conversationHistory = JSON.parse(savedHistory);
@@ -295,7 +295,7 @@
             addWelcomeMessage();
         }
 
-        if (localStorage.getItem('artery_is_open') === 'true') {
+        if (localStorage.getItem('business_is_open') === 'true') {
             document.getElementById('chatContainer').classList.add('open');
         }
     }
@@ -307,7 +307,7 @@
     function restartChat() {
         document.getElementById('messagesList').innerHTML = '';
         conversationHistory = [];
-        localStorage.removeItem('artery_history_' + sessionId);
+        localStorage.removeItem('business_history_' + sessionId);
         createNewSession();
         addWelcomeMessage();
     }
@@ -396,4 +396,5 @@
         const btn = document.querySelector('.faq-btn');
         if (menu && !menu.contains(e.target) && !btn.contains(e.target)) menu.classList.remove('show');
     });
+
 </script>
