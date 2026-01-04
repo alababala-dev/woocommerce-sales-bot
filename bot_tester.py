@@ -94,7 +94,7 @@ def run_test(test_name, message, expected_content=None, unexpected_content=None,
         return None
 
 def main():
-    print_header(f"🚀 ArteryBot V4.0 - בדיקות אינטגרציה מקיפות")
+    print_header(f"🚀 BusinessBot V4.0 - בדיקות אינטגרציה מקיפות")
     print(f"Session ID: {SESSION_ID}\n")
     
     history = []
@@ -113,7 +113,7 @@ def main():
     execute_step(run_test(
         test_name="בדיקת שפיות (Sanity)",
         message="מי אתה ומה אתה מוכר?",  
-        expected_content=["ארטרי", "Artery"], 
+        expected_content=["ארטרי", "Business"], 
         history=history
     ))
 
@@ -186,4 +186,5 @@ def main():
     print_header("✨ כל הבדיקות הסתיימו! ✨")
 
 if __name__ == "__main__":
+
     main()
